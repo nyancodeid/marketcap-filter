@@ -1,0 +1,28 @@
+#hero {
+	padding: 2rem 15px;
+	background-color: #563d7c;
+	color: #cdbfe3;
+}
+#hero h1 {
+	color: #FFFFFF;
+}
+#searchFilter {
+	background-color: #F5F5F5;
+}
+
+.padding {
+	padding: 1em 0;
+}
+.mt-8 {
+	margin-top: 8px;
+}
+.mb-16 {
+	margin-bottom: 8px;
+}
+
+.positive_change {
+	color: #093;
+}
+.negative_change {
+	color: #d14836;
+}

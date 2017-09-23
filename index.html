@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Cryptocurrency Market Capitalizations</title>
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="vendors/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="vendors/datatables/dataTables.bootstrap.css">
+	<link rel="stylesheet" href="vendors/pace/pace.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script>
+		var cacheTime = 3; // Menit
+	</script>
+</head>
+<body ng-app="app" ng-controller="appCtrl">
+	<div id="hero" class="text-center">
+		<h1>Cryptocurrency Market Capitalizations</h1>
+		<p class="lead">Custom Search Filter</p>
+	</div>
+	<div id="searchFilter">
+		<div class="container">
+			<div class="row padding">
+				<div class="col">
+					<h3>Custom Search</h3>
+				</div>
+				<div class="col" align="right">
+					<select class="custom-select" ng-change="loadProfile()" ng-model="selectedProfile">
+						<option value="default" selected>Select Profile</option>
+						<option ng-repeat="profile in profiles" value="{{ profile.id }}">{{ profile.name }}</option>
+					</select>
+					<button type="button" class="btn btn-danger" ng-click="removeProfile()">Remove</button>
+					<button type="button" class="btn btn-warning" ng-click="saveProfile()">Save</button>
+				</div>
+			</div>
+			<form class="row">
+				<div class="col">
+					<div class="form-group row">
+						<label class="col">Price</label>
+						<div class="col">
+							<input type="text" class="form-control numberFormat" id="priceStart" ng-model="search.price.start" placeholder="0">
+							<small class="form-text text-muted">Min. {{ price.min }}</small>
+						</div>
+						<div class="col">
+							<input type="text" class="form-control numberFormat" id="priceStop" ng-model="search.price.stop" placeholder="0">
+							<small class="form-text text-muted">Max. {{ price.max }}</small>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col">Circulating Supply</label>
+						<div class="col">
+							<input type="text" class="form-control numberFormat" id="supplyStart" ng-model="search.supply.start" placeholder="0">
+							<small class="form-text text-muted">Min. {{ supply.min }}</small>
+						</div>
+						<div class="col">
+							<input type="text" class="form-control numberFormat" id="supplyStop" ng-model="search.supply.stop" placeholder="0">
+							<small class="form-text text-muted">Max. {{ supply.max }}</small>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col">Market Cap</label>
+						<div class="col">
+							<input type="text" class="form-control numberFormat" id="marketCapStart" ng-model="search.marketcap.start" placeholder="0">
+							<small class="form-text text-muted">Min. {{ marketcap.min }}</small>
+						</div>
+						<div class="col">
+							<input type="text" class="form-control numberFormat" id="marketCapStop" ng-model="search.marketcap.stop" placeholder="0">
+							<small class="form-text text-muted">Max. {{ marketcap.max }}</small>
+						</div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="form-group row">
+						<label class="col">% Change (1h)</label>
+						<div class="col">
+							<input type="text" class="form-control" id="changeHourStart" ng-model="search.change_1h.start" placeholder="0">
+							<small class="form-text text-muted">Min. {{ change_1h.min }}</small>
+						</div>
+						<div class="col">
+							<input type="text" class="form-control" id="changeHourStop" ng-model="search.change_1h.stop" placeholder="0">
+							<small class="form-text text-muted">Max. {{ change_1h.max }}</small>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col">% Change (24h)</label>
+						<div class="col">
+							<input type="text" class="form-control" id="changeDayStart" ng-model="search.change_24h.start" placeholder="0">
+							<small class="form-text text-muted">Min. {{ change_24h.min }}</small>
+						</div>
+						<div class="col">
+							<input type="text" class="form-control" id="changeDayStop" ng-model="search.change_24h.stop" placeholder="0">
+							<small class="form-text text-muted">Mix. {{ change_24h.max }}</small>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col">% Change (7d)</label>
+						<div class="col">
+							<input type="text" class="form-control" id="changeWeekStart" ng-model="search.change_7d.start" placeholder="0">
+							<small class="form-text text-muted">Min. {{ change_7d.min }}</small>
+						</div>
+						<div class="col">
+							<input type="text" class="form-control" id="changeWeekStop" ng-model="search.change_7d.stop" placeholder="0">
+							<small class="form-text text-muted">Max. {{ change_7d.max }}</small>
+						</div>
+					</div>
+				</div>
+			</form>
+			<div align="right" style="padding-bottom: 16px;">
+				<button type="button" ng-click="findMatch()" class="btn btn-info">Find Match</button>
+				<button type="button" ng-click="resetResult()" class="btn btn-danger">Reset</button>
+			</div>
+		</div>
+	</div>
+	<div id="data" class="container" style="padding: 16px 0;">
+		<table id="dataTable" class="table table-bordered" cellspacing="0" width="100%">
+			<thead>
+				<th>#</th>
+				<th>Name</th>
+				<th>Market Cap</th>
+				<th>Price</th>
+				<th>Circulating Supply</th>
+				<th>Valume (24h)</th>
+				<th>% 1h</th>
+				<th>% 24h</th>
+				<th>% 7d</th>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Save Profile</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form>
+							<div class="form-group">
+								<label for="profile-name" class="form-control-label">Profile Name:</label>
+								<input type="text" ng-model="profileName" class="form-control" id="profile-name">
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="button" ng-click="saveProfileAction()" class="btn btn-primary">Save</button>
+					</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="vendors/jquery/dist/jquery.min.js" ></script>
+	<script src="vendors/angular/angular.min.js" ></script>
+	<script src="vendors/pace/pace.min.js"></script>
+	<script src="vendors/popper.js/dist/umd/popper.min.js"></script>
+	<script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="vendors/datatables/jquery.dataTables.min.js"></script>
+	<script src="vendors/datatables/dataTables.bootstrap.min.js"></script>
+	<script src="vendors/accounting/accounting.js"></script>
+	<script src="vendors/underscore/underscore-min.js"></script>
+
+	<script src="app.js"></script>
+</body>
+</html>

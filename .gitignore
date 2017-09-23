@@ -1,0 +1,5 @@
+public/
+.firebaserc
+firebase.json
+data.json
+bower_components/
