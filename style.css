@@ -26,3 +26,10 @@
 .negative_change {
 	color: #d14836;
 }
+
+#dataTable tbody > tr > td:not(:nth-child(1)):not(:nth-child(2)) {
+	text-align: right;
+}
+#dataTable tbody > tr > td:nth-child(1) {
+	text-align: center;
+}

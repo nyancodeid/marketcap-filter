@@ -37,71 +37,125 @@
 			<form class="row">
 				<div class="col">
 					<div class="form-group row">
-						<label class="col">Price</label>
-						<div class="col">
-							<input type="text" class="form-control numberFormat" id="priceStart" ng-model="search.price.start" placeholder="0">
-							<small class="form-text text-muted">Min. {{ price.min }}</small>
+						<label class="col col-xs-12">Price</label>
+						<div class="w-100"></div>
+						<div class="col col-xs-6">
+							<div class="input-group">
+								<div class="input-group-addon">$</div>
+								<input type="text" class="text-right form-control numberFormat" id="priceStart" ng-model="search.price.start" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Min. $ {{ price.min }}</small>
 						</div>
-						<div class="col">
-							<input type="text" class="form-control numberFormat" id="priceStop" ng-model="search.price.stop" placeholder="0">
-							<small class="form-text text-muted">Max. {{ price.max }}</small>
+						<div class="col col-xs-6">
+							<div class="input-group">
+								<div class="input-group-addon">$</div>
+								<input type="text" class="text-right form-control numberFormat" id="priceStop" ng-model="search.price.stop" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Max. $ {{ price.max }}</small>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col">Circulating Supply</label>
+						<div class="w-100"></div>
 						<div class="col">
-							<input type="text" class="form-control numberFormat" id="supplyStart" ng-model="search.supply.start" placeholder="0">
+							<input type="text" class="text-right form-control numberFormat" id="supplyStart" ng-model="search.supply.start" placeholder="0">
 							<small class="form-text text-muted">Min. {{ supply.min }}</small>
 						</div>
 						<div class="col">
-							<input type="text" class="form-control numberFormat" id="supplyStop" ng-model="search.supply.stop" placeholder="0">
+							<input type="text" class="text-right form-control numberFormat" id="supplyStop" ng-model="search.supply.stop" placeholder="0">
 							<small class="form-text text-muted">Max. {{ supply.max }}</small>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col">Market Cap</label>
+						<div class="w-100"></div>
 						<div class="col">
-							<input type="text" class="form-control numberFormat" id="marketCapStart" ng-model="search.marketcap.start" placeholder="0">
-							<small class="form-text text-muted">Min. {{ marketcap.min }}</small>
+							<div class="input-group">
+								<div class="input-group-addon">$</div>
+								<input type="text" class="text-right form-control numberFormat" id="marketCapStart" ng-model="search.marketcap.start" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Min. $ {{ marketcap.min }}</small>
 						</div>
 						<div class="col">
-							<input type="text" class="form-control numberFormat" id="marketCapStop" ng-model="search.marketcap.stop" placeholder="0">
-							<small class="form-text text-muted">Max. {{ marketcap.max }}</small>
+							<div class="input-group">
+								<div class="input-group-addon">$</div>
+								<input type="text" class="text-right form-control numberFormat" id="marketCapStop" ng-model="search.marketcap.stop" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Max. $ {{ marketcap.max }}</small>
+						</div>
+					</div>
+					<div class="form-group row">
+						<label class="col">Volume</label>
+						<div class="w-100"></div>
+						<div class="col">
+							<div class="input-group">
+								<div class="input-group-addon">$</div>
+								<input type="text" class="text-right form-control numberFormat" id="volumeStart" ng-model="search.volume.start" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Min. $ {{ volume.min }}</small>
+						</div>
+						<div class="col">
+							<div class="input-group">
+								<div class="input-group-addon">$</div>
+								<input type="text" class="text-right form-control numberFormat" id="volumeStop" ng-model="search.volume.stop" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Max. $ {{ volume.max }}</small>
 						</div>
 					</div>
 				</div>
 				<div class="col">
 					<div class="form-group row">
 						<label class="col">% Change (1h)</label>
+						<div class="w-100"></div>
 						<div class="col">
-							<input type="text" class="form-control" id="changeHourStart" ng-model="search.change_1h.start" placeholder="0">
-							<small class="form-text text-muted">Min. {{ change_1h.min }}</small>
+							<div class="input-group">
+								<div class="input-group-addon">%</div>
+								<input type="text" class="text-right form-control" id="changeHourStart" ng-model="search.change_1h.start" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Min. {{ change_1h.min }}%</small>
 						</div>
 						<div class="col">
-							<input type="text" class="form-control" id="changeHourStop" ng-model="search.change_1h.stop" placeholder="0">
-							<small class="form-text text-muted">Max. {{ change_1h.max }}</small>
+							<div class="input-group">
+								<div class="input-group-addon">%</div>
+								<input type="text" class="text-right form-control" id="changeHourStop" ng-model="search.change_1h.stop" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Max. {{ change_1h.max }}%</small>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col">% Change (24h)</label>
+						<div class="w-100"></div>
 						<div class="col">
-							<input type="text" class="form-control" id="changeDayStart" ng-model="search.change_24h.start" placeholder="0">
-							<small class="form-text text-muted">Min. {{ change_24h.min }}</small>
+							<div class="input-group">
+								<div class="input-group-addon">%</div>
+								<input type="text" class="text-right form-control" id="changeDayStart" ng-model="search.change_24h.start" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Min. {{ change_24h.min }}%</small>
 						</div>
 						<div class="col">
-							<input type="text" class="form-control" id="changeDayStop" ng-model="search.change_24h.stop" placeholder="0">
-							<small class="form-text text-muted">Mix. {{ change_24h.max }}</small>
+							<div class="input-group">
+								<div class="input-group-addon">%</div>
+								<input type="text" class="text-right form-control" id="changeDayStop" ng-model="search.change_24h.stop" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Max. {{ change_24h.max }}%</small>
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col">% Change (7d)</label>
+						<div class="w-100"></div>
 						<div class="col">
-							<input type="text" class="form-control" id="changeWeekStart" ng-model="search.change_7d.start" placeholder="0">
-							<small class="form-text text-muted">Min. {{ change_7d.min }}</small>
+							<div class="input-group">
+								<div class="input-group-addon">%</div>
+								<input type="text" class="text-right form-control" id="changeWeekStart" ng-model="search.change_7d.start" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Min. {{ change_7d.min }}%</small>
 						</div>
 						<div class="col">
-							<input type="text" class="form-control" id="changeWeekStop" ng-model="search.change_7d.stop" placeholder="0">
-							<small class="form-text text-muted">Max. {{ change_7d.max }}</small>
+							<div class="input-group">
+								<div class="input-group-addon">%</div>
+								<input type="text" class="text-right form-control" id="changeWeekStop" ng-model="search.change_7d.stop" placeholder="0">
+							</div>
+							<small class="form-text text-muted">Max. {{ change_7d.max }}%</small>
 						</div>
 					</div>
 				</div>
@@ -120,7 +174,7 @@
 				<th>Market Cap</th>
 				<th>Price</th>
 				<th>Circulating Supply</th>
-				<th>Valume (24h)</th>
+				<th>Volume (24h)</th>
 				<th>% 1h</th>
 				<th>% 24h</th>
 				<th>% 7d</th>

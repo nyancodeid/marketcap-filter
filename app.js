@@ -9,134 +9,181 @@ angular.module('app', [])
 			$scope.profiles = JSON.parse(localStorage.getItem('profiles'));
 		}
 
-		var callback = function(res) {
-			var dataTable = $('#dataTable').dataTable({
-				data: res,
-				columns: [
-					{
-						data: "rank"
-					},
-					{
-						data: "name"
-					},
-					{
-						data: "market_cap_usd",
-						render: function(data, type, row) {
-							return accounting.formatMoney(data);
-						}
-					},
-					{
-						data: "price_usd",
-						render: function(data, type, row) {
-							return accounting.formatMoney(data, {
-								precision: 8
-							});
-						}
-					},
-					{
-						data: "total_supply",
-						render: function(data, type, row) {
-							return accounting.formatNumber(data);
-						}
-					},
-					{
-						data: "24h_volume_usd",
-						render: function(data, type, row) {
-							return accounting.formatMoney(data);
-						}
-					},
-					{
-						data: "percent_change_1h",
-						render: function(data, type, row) {
-							if (Number(data) < 0) {
-								return "<span class='negative_change'>" + data + "%</span>";
-							} else if (Number(data) > 0) {
-								return "<span class='positive_change'>" + data + "%</span>";
-							} else {
-								return "N/A";
+		var dataTable = null;
+		var callback = function(res, reInit) {
+			if (!reInit) {
+				dataTable = $('#dataTable').dataTable({
+					scrollX: true,
+					lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+					data: res,
+					columns: [
+						{
+							data: "rank"
+						},
+						{
+							data: "name",
+							render: function(data, type, row) {
+								return data + " (" + row.symbol + ")";
+							}
+						},
+						{
+							data: "market_cap_usd",
+							render: function(data, type, row) {
+								return accounting.formatMoney(data);
+							}
+						},
+						{
+							data: "price_usd",
+							render: function(data, type, row) {
+								return accounting.formatMoney(data, {
+									precision: 8
+								});
+							}
+						},
+						{
+							data: "total_supply",
+							render: function(data, type, row) {
+								return accounting.formatNumber(data);
+							}
+						},
+						{
+							data: "24h_volume_usd",
+							render: function(data, type, row) {
+								return accounting.formatMoney(data);
+							}
+						},
+						{
+							data: "percent_change_1h",
+							render: function(data, type, row) {
+								if (Number(data) < 0) {
+									return "<span class='negative_change'>" + data + "%</span>";
+								} else if (Number(data) > 0) {
+									return "<span class='positive_change'>" + data + "%</span>";
+								} else {
+									return "N/A";
+								}
+							}
+						},
+						{
+							data: "percent_change_24h",
+							render: function(data, type, row) {
+								if (Number(data) < 0) {
+									return "<span class='negative_change'>" + data + "%</span>";
+								} else if (Number(data) > 0) {
+									return "<span class='positive_change'>" + data + "%</span>";
+								} else {
+									return "N/A";
+								}
+							}
+						},
+						{
+							data: "percent_change_7d",
+							render: function(data, type, row) {
+								if (Number(data) < 0) {
+									return "<span class='negative_change'>" + data + "%</span>";
+								} else if (Number(data) > 0) {
+									return "<span class='positive_change'>" + data + "%</span>";
+								} else {
+									return "N/A";
+								}
 							}
 						}
-					},
-					{
-						data: "percent_change_24h",
-						render: function(data, type, row) {
-							if (Number(data) < 0) {
-								return "<span class='negative_change'>" + data + "%</span>";
-							} else if (Number(data) > 0) {
-								return "<span class='positive_change'>" + data + "%</span>";
-							} else {
-								return "N/A";
-							}
-						}
-					},
-					{
-						data: "percent_change_7d",
-						render: function(data, type, row) {
-							if (Number(data) < 0) {
-								return "<span class='negative_change'>" + data + "%</span>";
-							} else if (Number(data) > 0) {
-								return "<span class='positive_change'>" + data + "%</span>";
-							} else {
-								return "N/A";
-							}
-						}
-					}
-				]
-			});
-
-			var items = {
-				prices: [],
-				marketcap: [],
-				supply: [],
-				hour: [],
-				day: [],
-				week: []
-			}
-			setTimeout(function() {
-				$scope.$apply(function() {
-					for (var i in res) {
-						var item = res[i];
-
-						items.prices.push(item.price_usd);
-						items.marketcap.push(item.market_cap_usd);
-						items.supply.push(item.total_supply);
-						items.hour.push(item.percent_change_1h);
-						items.day.push(item.percent_change_24h);
-						items.week.push(item.percent_change_7d);
-					}
-					var prices = items.prices.sort(function(a, b){return a-b}),
-						supply = items.supply.sort(function(a, b){return a-b}),
-						marketcap = items.marketcap.sort(function(a, b){return a-b}),
-						change_1h = items.hour.sort(function(a, b){return a-b}),
-						change_24h = items.day.sort(function(a, b){return a-b}),
-						change_7d = items.week.sort(function(a, b){return a-b});
-
-					$scope.price = {
-						min: prices[0],
-						max: prices[prices.length - 1]
-					}
-					$scope.supply = {
-						min: accounting.formatNumber(supply[0]),
-						max: supply[supply.length - 1]
-					}
-					$scope.marketcap = {
-						min: accounting.formatNumber(marketcap[0]),
-						max: marketcap[marketcap.length - 1]
-					}
-					$scope.change_1h = {
-						min: change_1h[0],
-						max: change_1h[change_1h.length - 1]
-					}
-					$scope.change_24h = {
-						min: change_24h[0],
-						max: change_24h[change_24h.length - 1]
-					}
-					$scope.change_7d = {
-						min: change_7d[0],
-						max: change_7d[change_7d.length - 1]
-					}
+					]
 				});
-			}, 200);
+
+				var items = {
+					prices: [],
+					marketcap: [],
+					supply: [],
+					volume: [],
+					hour: [],
+					day: [],
+					week: []
+				}
+				setTimeout(function() {
+					$scope.$apply(function() {
+						$scope.search = {};
+						for (var i in res) {
+							var item = res[i];
+
+							items.prices.push(item.price_usd);
+							items.marketcap.push(item.market_cap_usd);
+							items.supply.push(item.total_supply);
+							items.volume.push(item["24h_volume_usd"]);
+							items.hour.push(item.percent_change_1h);
+							items.day.push(item.percent_change_24h);
+							items.week.push(item.percent_change_7d);
+						}
+						var prices = items.prices.sort(function(a, b){return a-b}),
+							supply = items.supply.sort(function(a, b){return a-b}),
+							marketcap = items.marketcap.sort(function(a, b){return a-b}),
+							volume = items.volume.sort(function(a, b){return a-b}),
+							change_1h = items.hour.sort(function(a, b){return a-b}),
+							change_24h = items.day.sort(function(a, b){return a-b}),
+							change_7d = items.week.sort(function(a, b){return a-b});
+
+						$scope.price = {
+							min: prices[0],
+							max: accounting.formatNumber(prices[prices.length - 1])
+						}
+						$scope.search.price = {
+							start: prices[0],
+							stop: prices[prices.length - 1]
+						}
+						$scope.supply = {
+							min: accounting.formatNumber(supply[0]),
+							max: accounting.formatNumber(supply[supply.length - 1])
+						}
+						$scope.search.supply = {
+							start: supply[0],
+							stop: supply[supply.length - 1]
+						}
+						$scope.marketcap = {
+							min: accounting.formatNumber(marketcap[0]),
+							max: accounting.formatNumber(marketcap[marketcap.length - 1])
+						}
+						$scope.search.marketcap = {
+							start: marketcap[0],
+							stop: marketcap[marketcap.length - 1]
+						}
+						$scope.volume = {
+							min: accounting.formatNumber(volume[0]),
+							max: accounting.formatNumber(volume[volume.length - 1])
+						}
+						$scope.search.volume = {
+							start: volume[0],
+							stop: volume[volume.length - 1]
+						}
+						$scope.change_1h = {
+							min: change_1h[0],
+							max: change_1h[change_1h.length - 1]
+						}
+						$scope.search.change_1h = {
+							start: change_1h[0],
+							stop: change_1h[change_1h.length - 1]
+						}
+						$scope.change_24h = {
+							min: change_24h[0],
+							max: change_24h[change_24h.length - 1]
+						}
+						$scope.search.change_24h = {
+							start: change_24h[0],
+							stop: change_24h[change_24h.length - 1]
+						}
+						$scope.change_7d = {
+							min: change_7d[0],
+							max: change_7d[change_7d.length - 1]
+						}
+						$scope.search.change_7d = {
+							start: change_7d[0],
+							stop: change_7d[change_7d.length - 1]
+						}
+					});
+				}, 200);
+			} else {
+				dataTable.api().clear();
+				dataTable.api().rows.add(res).draw();
+			}
 
 			$scope.findMatch = function() {
 				$.fn.dataTable.ext.search.push(
@@ -170,7 +217,7 @@ angular.module('app', [])
 									 ( min <= supply   && isNaN( max ) ) ||
 									 ( min <= supply   && supply <= max ) )
 								{
-									// do Lanjur
+									// do Lanjut
 								} else {
 									return false;
 								}
@@ -187,7 +234,24 @@ angular.module('app', [])
 									 ( min <= marketcap   && isNaN( max ) ) ||
 									 ( min <= marketcap   && marketcap <= max ) )
 								{
-									// do Lanjur
+									// do Lanjut
+								} else {
+									return false;
+								}
+							}
+						}
+						if (typeof $scope.search.volume !== "undefined") {
+							var volume = accounting.unformat(data[2]);
+							var min = accounting.unformat($scope.search.volume.start),
+								max = accounting.unformat($scope.search.volume.stop);
+
+							if ($scope.search.volume.start != "" && $scope.search.volume.stop	!= "") {
+								if ( ( isNaN( min ) && isNaN( max ) ) ||
+									 ( isNaN( min ) && volume <= max ) ||
+									 ( min <= volume   && isNaN( max ) ) ||
+									 ( min <= volume   && volume <= max ) )
+								{
+									// do Lanjut
 								} else {
 									return false;
 								}
@@ -205,7 +269,7 @@ angular.module('app', [])
 									 ( min <= changeHour   && isNaN( max ) ) ||
 									 ( min <= changeHour   && changeHour <= max ) )
 								{
-									// do Lanjur
+									// do Lanjut
 								} else {
 									return false;
 								}
@@ -222,7 +286,7 @@ angular.module('app', [])
 									 ( min <= changeDay   && isNaN( max ) ) ||
 									 ( min <= changeDay   && changeDay <= max ) )
 								{
-									// do Lanjur
+									// do Lanjut
 								} else {
 									return false;
 								}
@@ -239,7 +303,7 @@ angular.module('app', [])
 									 ( min <= changeWeek   && isNaN( max ) ) ||
 									 ( min <= changeWeek   && changeWeek <= max ) )
 								{
-									// do Lanjur
+									// do Lanjut
 								} else {
 									return false;
 								}
@@ -267,31 +331,32 @@ angular.module('app', [])
 
         	return diffMins;
 		}
-		function startService() {
+		function startService(reInit) {
+			var timestamp = (reInit) ? "?v="+Date.now() : "";
 			$.ajax({
-				url: "https://api.coinmarketcap.com/v1/ticker/",
+				url: "/data.json" + timestamp,
 				method: "GET",
 				crossdomain: true
 			}).then(function(res) {
 				localStorage.setItem("data", JSON.stringify(res));
 				localStorage.setItem("timestamp", Date.now());
 
-				callback(res);
+				callback(res, reInit);
 			});
 		}
 
 		if (localStorage.getItem('data') !== null) {
 			if (diffTime() >= cacheTime) {
 				alert("timeout cache");
-				startService();
+				startService(false);
 			} else {
 				var res = localStorage.getItem("data");
 				alert("ambil dari local");
-				callback(JSON.parse(res));
+				callback(JSON.parse(res), false);
 			}
 		} else {
 			alert("ambil direct");
-			startService();
+			startService(false);
 		}
 
 		$scope.loadProfile = function() {
@@ -331,5 +396,9 @@ angular.module('app', [])
 
 			$("#saveModal").modal("hide");
 		}
+
+		// setInterval(function() {
+		// 	startService(true);
+		// }, 6000);
 		
 	});
