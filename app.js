@@ -14,6 +14,13 @@ angular.module('app', [])
 			if (!reInit) {
 				dataTable = $('#dataTable').dataTable({
 					scrollX: true,
+					language: [ {
+				        decimal: ".",
+				        thousands: ","
+				    } ],
+				    order: [
+				    	[3, 'asc']
+				    ],
 					lengthMenu: [[-1, 10, 25, 50], ["All", 10, 25, 50]],
 					data: res,
 					columns: [
@@ -60,7 +67,7 @@ angular.module('app', [])
 								} else if (Number(data) > 0) {
 									return "<span class='positive_change'>" + data + "</span>";
 								} else {
-									return "N/A";
+									return "0";
 								}
 							}
 						},
@@ -72,7 +79,7 @@ angular.module('app', [])
 								} else if (Number(data) > 0) {
 									return "<span class='positive_change'>" + data + "</span>";
 								} else {
-									return "N/A";
+									return "0";
 								}
 							}
 						},
@@ -84,7 +91,7 @@ angular.module('app', [])
 								} else if (Number(data) > 0) {
 									return "<span class='positive_change'>" + data + "</span>";
 								} else {
-									return "N/A";
+									return "0";
 								}
 							}
 						}
@@ -323,7 +330,7 @@ angular.module('app', [])
 						}
 					}
 				);
-				dataTable.api().draw();
+				dataTable.api().order([3, 'asc']).draw();
 			}
 			$scope.resetResult = function() {
 				// var data = JSON.parse(localStorage.getItem('data'));
