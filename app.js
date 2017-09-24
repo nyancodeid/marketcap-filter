@@ -344,7 +344,7 @@ angular.module('app', [])
 		function startService(reInit) {
 			var timestamp = (reInit) ? "?v="+Date.now() : "";
 			$.ajax({
-				url: "/data.json",
+				url: "https://api.coinmarketcap.com/v1/ticker/",
 				method: "GET",
 				crossdomain: true
 			}).then(function(res) {
