@@ -40,7 +40,9 @@ angular.module('app', [])
 						{
 							data: "market_cap_usd",
 							render: function(data, type, row) {
-								return accounting.formatMoney(data);
+								return accounting.formatMoney(data, {
+									precision: 0
+								});
 							}
 						},
 						{
