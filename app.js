@@ -14,7 +14,7 @@ angular.module('app', [])
 			if (!reInit) {
 				dataTable = $('#dataTable').dataTable({
 					scrollX: true,
-					lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+					lengthMenu: [[-1, 10, 25, 50], ["All", 10, 25, 50]],
 					data: res,
 					columns: [
 						{

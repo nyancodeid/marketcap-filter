@@ -109,15 +109,15 @@
 						<div class="w-100"></div>
 						<div class="col">
 							<div class="input-group">
-								<div class="input-group-addon">%</div>
 								<input type="text" class="text-right form-control" id="changeHourStart" ng-model="search.change_1h.start" placeholder="0">
+								<div class="input-group-addon">%</div>
 							</div>
 							<small class="form-text text-muted">Min. {{ change_1h.min }}%</small>
 						</div>
 						<div class="col">
 							<div class="input-group">
-								<div class="input-group-addon">%</div>
 								<input type="text" class="text-right form-control" id="changeHourStop" ng-model="search.change_1h.stop" placeholder="0">
+								<div class="input-group-addon">%</div>
 							</div>
 							<small class="form-text text-muted">Max. {{ change_1h.max }}%</small>
 						</div>
@@ -127,15 +127,15 @@
 						<div class="w-100"></div>
 						<div class="col">
 							<div class="input-group">
-								<div class="input-group-addon">%</div>
 								<input type="text" class="text-right form-control" id="changeDayStart" ng-model="search.change_24h.start" placeholder="0">
+								<div class="input-group-addon">%</div>
 							</div>
 							<small class="form-text text-muted">Min. {{ change_24h.min }}%</small>
 						</div>
 						<div class="col">
 							<div class="input-group">
-								<div class="input-group-addon">%</div>
 								<input type="text" class="text-right form-control" id="changeDayStop" ng-model="search.change_24h.stop" placeholder="0">
+								<div class="input-group-addon">%</div>
 							</div>
 							<small class="form-text text-muted">Max. {{ change_24h.max }}%</small>
 						</div>
@@ -145,25 +145,28 @@
 						<div class="w-100"></div>
 						<div class="col">
 							<div class="input-group">
-								<div class="input-group-addon">%</div>
 								<input type="text" class="text-right form-control" id="changeWeekStart" ng-model="search.change_7d.start" placeholder="0">
+								<div class="input-group-addon">%</div>
 							</div>
 							<small class="form-text text-muted">Min. {{ change_7d.min }}%</small>
 						</div>
 						<div class="col">
 							<div class="input-group">
-								<div class="input-group-addon">%</div>
 								<input type="text" class="text-right form-control" id="changeWeekStop" ng-model="search.change_7d.stop" placeholder="0">
+								<div class="input-group-addon">%</div>
 							</div>
 							<small class="form-text text-muted">Max. {{ change_7d.max }}%</small>
 						</div>
 					</div>
+					<div class="form-group" align="right" style="padding-top: 20px;">
+						<button type="button" ng-click="findMatch()" class="btn btn-info">Find Match</button>
+						<button type="button" ng-click="resetResult()" class="btn btn-danger">Reset</button>
+						<button type="button" ng-click="clearAllParams()" class="btn btn-danger">Clear Param</button>
+					</div>
 				</div>
 			</form>
 			<div align="right" style="padding-bottom: 16px;">
-				<button type="button" ng-click="findMatch()" class="btn btn-info">Find Match</button>
-				<button type="button" ng-click="resetResult()" class="btn btn-danger">Reset</button>
-				<button type="button" ng-click="clearAllParams()" class="btn btn-danger">Clear Param</button>
+				
 			</div>
 		</div>
 	</div>
