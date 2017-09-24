@@ -334,7 +334,7 @@ angular.module('app', [])
 		function startService(reInit) {
 			var timestamp = (reInit) ? "?v="+Date.now() : "";
 			$.ajax({
-				url: "/data.json" + timestamp,
+				url: "https://api.coinmarketcap.com/v1/ticker/",
 				method: "GET",
 				crossdomain: true
 			}).then(function(res) {
@@ -347,15 +347,12 @@ angular.module('app', [])
 
 		if (localStorage.getItem('data') !== null) {
 			if (diffTime() >= cacheTime) {
-				alert("timeout cache");
 				startService(false);
 			} else {
 				var res = localStorage.getItem("data");
-				alert("ambil dari local");
 				callback(JSON.parse(res), false);
 			}
 		} else {
-			alert("ambil direct");
 			startService(false);
 		}
 
