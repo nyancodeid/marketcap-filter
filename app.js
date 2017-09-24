@@ -56,9 +56,9 @@ angular.module('app', [])
 							data: "percent_change_1h",
 							render: function(data, type, row) {
 								if (Number(data) < 0) {
-									return "<span class='negative_change'>" + data + "%</span>";
+									return "<span class='negative_change'>" + data + "</span>";
 								} else if (Number(data) > 0) {
-									return "<span class='positive_change'>" + data + "%</span>";
+									return "<span class='positive_change'>" + data + "</span>";
 								} else {
 									return "N/A";
 								}
@@ -68,9 +68,9 @@ angular.module('app', [])
 							data: "percent_change_24h",
 							render: function(data, type, row) {
 								if (Number(data) < 0) {
-									return "<span class='negative_change'>" + data + "%</span>";
+									return "<span class='negative_change'>" + data + "</span>";
 								} else if (Number(data) > 0) {
-									return "<span class='positive_change'>" + data + "%</span>";
+									return "<span class='positive_change'>" + data + "</span>";
 								} else {
 									return "N/A";
 								}
@@ -80,9 +80,9 @@ angular.module('app', [])
 							data: "percent_change_7d",
 							render: function(data, type, row) {
 								if (Number(data) < 0) {
-									return "<span class='negative_change'>" + data + "%</span>";
+									return "<span class='negative_change'>" + data + "</span>";
 								} else if (Number(data) > 0) {
-									return "<span class='positive_change'>" + data + "%</span>";
+									return "<span class='positive_change'>" + data + "</span>";
 								} else {
 									return "N/A";
 								}
@@ -135,8 +135,8 @@ angular.module('app', [])
 							max: accounting.formatNumber(supply[supply.length - 1])
 						}
 						$scope.search.supply = {
-							start: supply[0],
-							stop: supply[supply.length - 1]
+							start: accounting.formatNumber(supply[0]),
+							stop: accounting.formatNumber(supply[supply.length - 1])
 						}
 						$scope.marketcap = {
 							min: accounting.formatNumber(marketcap[0]),
@@ -151,8 +151,8 @@ angular.module('app', [])
 							max: accounting.formatNumber(volume[volume.length - 1])
 						}
 						$scope.search.volume = {
-							start: volume[0],
-							stop: volume[volume.length - 1]
+							start: accounting.formatNumber(volume[0]),
+							stop: accounting.formatNumber(volume[volume.length - 1])
 						}
 						$scope.change_1h = {
 							min: change_1h[0],
@@ -188,6 +188,7 @@ angular.module('app', [])
 			$scope.findMatch = function() {
 				$.fn.dataTable.ext.search.push(
 					function(settings, data, dataIndex) {
+						var Next = [];
 
 						if (typeof $scope.search.price !== "undefined") {
 							var price = accounting.unformat(data[3]);
@@ -197,10 +198,11 @@ angular.module('app', [])
 							if ($scope.search.price.start != "" && $scope.search.price.stop	!= "") {
 								if ( ( isNaN( min ) && isNaN( max ) ) ||
 									( isNaN( min ) && price <= max ) ||
-									( min <= price   && isNaN( max ) ) ||
-									( min <= price   && price <= max ) )
+									( min <= price && isNaN( max ) ) ||
+									( min <= price && price <= max ) )
 								{
 									// do Lanjut
+									Next.push(true);
 								} else {
 									return false;
 								}
@@ -214,10 +216,11 @@ angular.module('app', [])
 							if ($scope.search.supply.start != "" && $scope.search.supply.stop	!= "") {
 								if ( ( isNaN( min ) && isNaN( max ) ) ||
 									 ( isNaN( min ) && supply <= max ) ||
-									 ( min <= supply   && isNaN( max ) ) ||
-									 ( min <= supply   && supply <= max ) )
+									 ( min <= supply && isNaN( max ) ) ||
+									 ( min <= supply && supply <= max ) )
 								{
 									// do Lanjut
+									Next.push(true);
 								} else {
 									return false;
 								}
@@ -231,27 +234,29 @@ angular.module('app', [])
 							if ($scope.search.marketcap.start != "" && $scope.search.marketcap.stop	!= "") {
 								if ( ( isNaN( min ) && isNaN( max ) ) ||
 									 ( isNaN( min ) && marketcap <= max ) ||
-									 ( min <= marketcap   && isNaN( max ) ) ||
-									 ( min <= marketcap   && marketcap <= max ) )
+									 ( min <= marketcap && isNaN( max ) ) ||
+									 ( min <= marketcap && marketcap <= max ) )
 								{
 									// do Lanjut
+									Next.push(true);
 								} else {
 									return false;
 								}
 							}
 						}
 						if (typeof $scope.search.volume !== "undefined") {
-							var volume = accounting.unformat(data[2]);
+							var volume = accounting.unformat(data[5]);
 							var min = accounting.unformat($scope.search.volume.start),
 								max = accounting.unformat($scope.search.volume.stop);
 
 							if ($scope.search.volume.start != "" && $scope.search.volume.stop	!= "") {
 								if ( ( isNaN( min ) && isNaN( max ) ) ||
 									 ( isNaN( min ) && volume <= max ) ||
-									 ( min <= volume   && isNaN( max ) ) ||
-									 ( min <= volume   && volume <= max ) )
+									 ( min <= volume && isNaN( max ) ) ||
+									 ( min <= volume && volume <= max ) )
 								{
 									// do Lanjut
+									Next.push(true);
 								} else {
 									return false;
 								}
@@ -262,14 +267,16 @@ angular.module('app', [])
 							var changeHour = accounting.unformat(data[6]);
 							var min = accounting.unformat($scope.search.change_1h.start),
 								max = accounting.unformat($scope.search.change_1h.stop);
+							
 
 							if (min != "" && max != "") {
 								if ( ( isNaN( min ) && isNaN( max ) ) ||
 									 ( isNaN( min ) && changeHour <= max ) ||
-									 ( min <= changeHour   && isNaN( max ) ) ||
-									 ( min <= changeHour   && changeHour <= max ) )
+									 ( min <= changeHour && isNaN( max ) ) ||
+									 ( min <= changeHour && changeHour <= max ) )
 								{
 									// do Lanjut
+									Next.push(true);
 								} else {
 									return false;
 								}
@@ -283,10 +290,11 @@ angular.module('app', [])
 							if (min != "" && max != "") {
 								if ( ( isNaN( min ) && isNaN( max ) ) ||
 									 ( isNaN( min ) && changeDay <= max ) ||
-									 ( min <= changeDay   && isNaN( max ) ) ||
-									 ( min <= changeDay   && changeDay <= max ) )
+									 ( min <= changeDay && isNaN( max ) ) ||
+									 ( min <= changeDay && changeDay <= max ) )
 								{
 									// do Lanjut
+									Next.push(true);
 								} else {
 									return false;
 								}
@@ -300,17 +308,19 @@ angular.module('app', [])
 							if (min != "" && max != "") {
 								if ( ( isNaN( min ) && isNaN( max ) ) ||
 									 ( isNaN( min ) && changeWeek <= max ) ||
-									 ( min <= changeWeek   && isNaN( max ) ) ||
-									 ( min <= changeWeek   && changeWeek <= max ) )
+									 ( min <= changeWeek && isNaN( max ) ) ||
+									 ( min <= changeWeek && changeWeek <= max ) )
 								{
 									// do Lanjut
+									Next.push(true);
 								} else {
 									return false;
 								}
 							}
 						}
-
-						return true;
+						if (Next.length != 0) {
+							return true;
+						}
 					}
 				);
 				dataTable.api().draw();
@@ -334,7 +344,7 @@ angular.module('app', [])
 		function startService(reInit) {
 			var timestamp = (reInit) ? "?v="+Date.now() : "";
 			$.ajax({
-				url: "https://api.coinmarketcap.com/v1/ticker/",
+				url: "/data.json",
 				method: "GET",
 				crossdomain: true
 			}).then(function(res) {
@@ -393,9 +403,32 @@ angular.module('app', [])
 
 			$("#saveModal").modal("hide");
 		}
+		$scope.clearAllParams = function() {
+			$scope.search = {};
+		}
 
-		// setInterval(function() {
-		// 	startService(true);
-		// }, 6000);
+		$('.numberFormat').on("keyup", function(event) {
+			var selection = window.getSelection().toString();
+            if ( selection !== '' ) {
+                return;
+            }
+            
+            // When the arrow keys are pressed, abort.
+            if ( $.inArray( event.keyCode, [38,40,37,39] ) !== -1 ) {
+                return;
+            }
+            
+            var $this = $( this );
+            
+            // Get the value.
+            var input = $this.val();
+            
+            var input = input.replace(/[\D\s\._\-]+/g, "");
+            input = input ? parseInt( input, 10 ) : 0;
+
+            $this.val( function() {
+                return ( input === 0 ) ? "" : input.toLocaleString( "en-US" );
+            } );
+		})
 		
 	});

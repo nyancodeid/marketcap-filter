@@ -42,14 +42,14 @@
 						<div class="col col-xs-6">
 							<div class="input-group">
 								<div class="input-group-addon">$</div>
-								<input type="text" class="text-right form-control numberFormat" id="priceStart" ng-model="search.price.start" placeholder="0">
+								<input type="text" class="text-right form-control" id="priceStart" ng-model="search.price.start" placeholder="0">
 							</div>
 							<small class="form-text text-muted">Min. $ {{ price.min }}</small>
 						</div>
 						<div class="col col-xs-6">
 							<div class="input-group">
 								<div class="input-group-addon">$</div>
-								<input type="text" class="text-right form-control numberFormat" id="priceStop" ng-model="search.price.stop" placeholder="0">
+								<input type="text" class="text-right form-control" id="priceStop" ng-model="search.price.stop" placeholder="0">
 							</div>
 							<small class="form-text text-muted">Max. $ {{ price.max }}</small>
 						</div>
@@ -72,14 +72,14 @@
 						<div class="col">
 							<div class="input-group">
 								<div class="input-group-addon">$</div>
-								<input type="text" class="text-right form-control numberFormat" id="marketCapStart" ng-model="search.marketcap.start" placeholder="0">
+								<input type="text" class="text-right form-control" id="marketCapStart" ng-model="search.marketcap.start" placeholder="0">
 							</div>
 							<small class="form-text text-muted">Min. $ {{ marketcap.min }}</small>
 						</div>
 						<div class="col">
 							<div class="input-group">
 								<div class="input-group-addon">$</div>
-								<input type="text" class="text-right form-control numberFormat" id="marketCapStop" ng-model="search.marketcap.stop" placeholder="0">
+								<input type="text" class="text-right form-control" id="marketCapStop" ng-model="search.marketcap.stop" placeholder="0">
 							</div>
 							<small class="form-text text-muted">Max. $ {{ marketcap.max }}</small>
 						</div>
@@ -163,6 +163,7 @@
 			<div align="right" style="padding-bottom: 16px;">
 				<button type="button" ng-click="findMatch()" class="btn btn-info">Find Match</button>
 				<button type="button" ng-click="resetResult()" class="btn btn-danger">Reset</button>
+				<button type="button" ng-click="clearAllParams()" class="btn btn-danger">Clear Param</button>
 			</div>
 		</div>
 	</div>
