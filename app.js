@@ -30,7 +30,11 @@ angular.module('app', [])
 						{
 							data: "name",
 							render: function(data, type, row) {
-								return data + " (" + row.symbol + ")";
+								var isi = data + " (" + row.symbol + ")";
+								var nama = data.replace(/\s+/g, '-').toLowerCase();
+								var link = "https://coinmarketcap.com/currencies/" + nama + "/";
+
+								return "<a target='_blank' href='"+ link +"'>" + isi + "</a>";
 							}
 						},
 						{
