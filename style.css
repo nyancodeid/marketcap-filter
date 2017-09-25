@@ -33,3 +33,13 @@
 #dataTable tbody > tr > td:nth-child(1) {
 	text-align: center;
 }
+
+.google-icon {
+	background: url(/vendors/img/google.png) center/contain;
+    height: 16px;
+    width: 16px;
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-left: 8px;
+    margin-bottom: -3px;
+}

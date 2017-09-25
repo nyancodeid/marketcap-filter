@@ -32,9 +32,10 @@ angular.module('app', [])
 							render: function(data, type, row) {
 								var isi = data + " (" + row.symbol + ")";
 								var nama = data.replace(/\s+/g, '-').toLowerCase();
+								var queryName = data.replace(/\s+/g, '+').toLowerCase();
 								var link = "https://coinmarketcap.com/currencies/" + nama + "/";
 
-								return "<a target='_blank' href='"+ link +"'>" + isi + "</a>";
+								return "<a target='_blank' href='"+ link +"'>" + isi + "</a><a target='_blank' href='https://www.google.com/search?q=" + queryName + "&source=lnms&tbm=nws' class='google-icon'></a>";
 							}
 						},
 						{
