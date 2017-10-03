@@ -8,10 +8,11 @@
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="vendors/bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="vendors/datatables/dataTables.bootstrap.css">
+	<link rel="stylesheet" href="vendors/datatables/buttons.dataTables.min.css">
 	<link rel="stylesheet" href="vendors/pace/pace.min.css">
 	<link rel="stylesheet" href="style.css?v=1.0.2">
 	<script>
-		var cacheTime = 3; // Menit
+		var cacheTime = 5; // Menit
 	</script>
 </head>
 <body ng-app="app" ng-controller="appCtrl">
@@ -22,7 +23,7 @@
 	<div id="searchFilter">
 		<div class="container">
 			<div class="row padding">
-				<div class="col">
+				<div class="col-xs-3">
 					<h3>Custom Search</h3>
 				</div>
 				<div class="col" align="right">
@@ -32,6 +33,13 @@
 					</select>
 					<button type="button" class="btn btn-danger" ng-click="removeProfile()">Remove</button>
 					<button type="button" class="btn btn-warning" ng-click="saveProfile()">Save</button>
+				</div>
+				<div class="col-xs-1"></div>
+				<div class="col">
+					<button type="button" ng-click="findMatch()" class="btn btn-info">Find Match</button>
+					<button type="button" ng-click="resetResult()" class="btn btn-danger">Reset</button>
+					<button type="button" ng-click="clearAllParams()" class="btn btn-danger">Clear Param</button>
+					<button type="button" ng-click="removeAllCache()" class="btn btn-danger">Clear Cache</button>
 				</div>
 			</div>
 			<form class="row">
@@ -105,10 +113,11 @@
 				</div>
 				<div class="col">
 					<div class="form-group row">
-						<label class="col">% Change (1h)</label>
+						<label class="col col-xs-12">% Change</label>
 						<div class="w-100"></div>
 						<div class="col">
 							<div class="input-group">
+								<div class="input-group-addon">1h min</div>
 								<input type="text" class="text-right form-control" id="changeHourStart" ng-model="search.change_1h.start" placeholder="0">
 								<div class="input-group-addon">%</div>
 							</div>
@@ -116,6 +125,7 @@
 						</div>
 						<div class="col">
 							<div class="input-group">
+								<div class="input-group-addon">max</div>
 								<input type="text" class="text-right form-control" id="changeHourStop" ng-model="search.change_1h.stop" placeholder="0">
 								<div class="input-group-addon">%</div>
 							</div>
@@ -123,10 +133,10 @@
 						</div>
 					</div>
 					<div class="form-group row">
-						<label class="col">% Change (24h)</label>
 						<div class="w-100"></div>
 						<div class="col">
 							<div class="input-group">
+								<div class="input-group-addon">24h min</div>
 								<input type="text" class="text-right form-control" id="changeDayStart" ng-model="search.change_24h.start" placeholder="0">
 								<div class="input-group-addon">%</div>
 							</div>
@@ -134,6 +144,7 @@
 						</div>
 						<div class="col">
 							<div class="input-group">
+								<div class="input-group-addon">max</div>
 								<input type="text" class="text-right form-control" id="changeDayStop" ng-model="search.change_24h.stop" placeholder="0">
 								<div class="input-group-addon">%</div>
 							</div>
@@ -141,10 +152,10 @@
 						</div>
 					</div>
 					<div class="form-group row">
-						<label class="col">% Change (7d)</label>
 						<div class="w-100"></div>
 						<div class="col">
 							<div class="input-group">
+								<div class="input-group-addon">7d min</div>
 								<input type="text" class="text-right form-control" id="changeWeekStart" ng-model="search.change_7d.start" placeholder="0">
 								<div class="input-group-addon">%</div>
 							</div>
@@ -152,25 +163,56 @@
 						</div>
 						<div class="col">
 							<div class="input-group">
+								<div class="input-group-addon">max</div>
 								<input type="text" class="text-right form-control" id="changeWeekStop" ng-model="search.change_7d.stop" placeholder="0">
 								<div class="input-group-addon">%</div>
 							</div>
 							<small class="form-text text-muted">Max. {{ change_7d.max }}%</small>
 						</div>
 					</div>
-					<div class="form-group" align="right" style="padding-top: 20px;">
-						<button type="button" ng-click="findMatch()" class="btn btn-info">Find Match</button>
-						<button type="button" ng-click="resetResult()" class="btn btn-danger">Reset</button>
-						<button type="button" ng-click="clearAllParams()" class="btn btn-danger">Clear Param</button>
+					<div class="form-group row">
+						<div class="w-100"></div>
+						<div class="col">
+							<div class="input-group">
+								<div class="input-group-addon">30d min</div>
+								<input type="text" class="text-right form-control" id="changeMonthStart" ng-model="search.change_30d.start" placeholder="0">
+								<div class="input-group-addon">%</div>
+							</div>
+							<small class="form-text text-muted">Min. {{ change_30d.min }}%</small>
+						</div>
+						<div class="col">
+							<div class="input-group">
+								<div class="input-group-addon">max</div>
+								<input type="text" class="text-right form-control" id="changeMonthStop" ng-model="search.change_30d.stop" placeholder="0">
+								<div class="input-group-addon">%</div>
+							</div>
+							<small class="form-text text-muted">Max. {{ change_30d.max }}%</small>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="w-100"></div>
+						<div class="col">
+							<div class="input-group">
+								<div class="input-group-addon">ytd min</div>
+								<input type="text" class="text-right form-control" id="changeYearStart" ng-model="search.change_ytd.start" placeholder="0">
+								<div class="input-group-addon">%</div>
+							</div>
+							<small class="form-text text-muted">Min. {{ change_ytd.min }}%</small>
+						</div>
+						<div class="col">
+							<div class="input-group">
+								<div class="input-group-addon">max</div>
+								<input type="text" class="text-right form-control" id="changeYearStop" ng-model="search.change_ytd.stop" placeholder="0">
+								<div class="input-group-addon">%</div>
+							</div>
+							<small class="form-text text-muted">Max. {{ change_ytd.max }}%</small>
+						</div>
 					</div>
 				</div>
 			</form>
-			<div align="right" style="padding-bottom: 16px;">
-				
-			</div>
 		</div>
 	</div>
-	<div id="data" class="container" style="padding: 16px 0;">
+	<div id="data" class="container custom-container" style="padding: 16px 0;">
 		<table id="dataTable" class="table table-bordered" cellspacing="0" width="100%">
 			<thead>
 				<th>#</th>
@@ -179,9 +221,11 @@
 				<th>Price</th>
 				<th>Circulating Supply</th>
 				<th>Volume (24h)</th>
-				<th>% 1h</th>
-				<th>% 24h</th>
-				<th>% 7d</th>
+				<th>% <br>1h</th>
+				<th>% <br>24h</th>
+				<th>% <br>7d</th>
+				<th>% <br>30d</th>
+				<th>% <br>ytd</th>
 			</thead>
 			<tbody>
 			</tbody>
@@ -214,12 +258,17 @@
 	</div>
 
 	<script src="vendors/jquery/dist/jquery.min.js" ></script>
+	<script src="vendors/jquery/dist/jquery.ajax-cross-origin.min.js"></script>
 	<script src="vendors/angular/angular.min.js" ></script>
 	<script src="vendors/pace/pace.min.js"></script>
 	<script src="vendors/popper.js/dist/umd/popper.min.js"></script>
 	<script src="vendors/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script src="vendors/datatables/jquery.dataTables.min.js"></script>
 	<script src="vendors/datatables/dataTables.bootstrap.min.js"></script>
+	<script src="vendors/datatables/dataTables.buttons.min.js"></script>
+	<script src="vendors/datatables/jszip.min.js"></script>
+	<script src="vendors/datatables/buttons.html5.min.js"></script>
+	<script src="vendors/datatables/buttons.print.min.js"></script>
 	<script src="vendors/accounting/accounting.js"></script>
 	<script src="vendors/underscore/underscore-min.js"></script>
 

@@ -1,3 +1,6 @@
+.custom-container {
+	max-width: 1280px;
+}
 #hero {
 	padding: 2rem 15px;
 	background-color: #563d7c;
@@ -35,7 +38,7 @@
 }
 
 .google-icon {
-	background: url(/vendors/img/google.png) center/contain;
+	background: url('vendors/img/google.png') center/contain;
     height: 16px;
     width: 16px;
     background-repeat: no-repeat;
