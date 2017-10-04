@@ -333,7 +333,7 @@ angular.module('app', [])
 				crossdomain: true
 			}).then(function(dataMarketCap) {
 				$.ajax({
-					url: "/proxy.php",
+					url: "proxy.php",
 					method: "GET",
 					crossdomain: true
 				}).then(function(dataStrymex) {
@@ -348,10 +348,6 @@ angular.module('app', [])
 				$counter++;
 				Object.keys(dataStrymex).forEach(function(coinStrymex, $indexStr) {
 					if (marketcap.symbol == dataStrymex[coinStrymex].symbol) {
-						if (marketcap.symbol == "CAGE") {
-							console.log(Object.keys(dataStrymex).length);
-							console.log($indexStr);
-						}
 						dataMarketCap[$index]["percent_change_30d"] = dataStrymex[coinStrymex].change30days;
 						dataMarketCap[$index]["percent_change_ytd"] = dataStrymex[coinStrymex].changeNewYear;
 					}
@@ -669,31 +665,6 @@ angular.module('app', [])
 
 				callback(result);
 			});
-		}
-		function getPastPriceAllCoin(coins) {
-			var i = 0;
-			window.results = [];
-
-			function getPrice(coin) {
-				$.ajax({
-					url: "/proxy.php?coin=" + coin,
-					method: "GET",
-					crossdomain: true,
-					async: true
-				}).then(function(res) {
-					var Source = $(res);
-					var lastPrice = Number(Source.find("table.table tbody tr:last-child td").eq(4).text());
-
-					window.results.push({
-						coin: coin,
-						lastPrice: lastPrice
-					});
-				})
-			}
-
-			for (var x in coins) {
-				getPrice(coins[x]);	
-			}
 		}
 
 		if (localStorage.getItem('data') !== null) {
