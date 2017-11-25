@@ -6,6 +6,7 @@
 	<title>Cryptocurrency Market Capitalizations</title>
 
 	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="vendors/font-awesome/font-awesome.min.css">
 	<link rel="stylesheet" href="vendors/bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="vendors/datatables/dataTables.bootstrap.css">
 	<link rel="stylesheet" href="vendors/datatables/buttons.dataTables.min.css">
@@ -31,17 +32,18 @@
 						<option value="default" selected>Select Profile</option>
 						<option ng-repeat="profile in profiles" value="{{ profile.id }}">{{ profile.name }}</option>
 					</select>
-					<button type="button" class="btn btn-danger" ng-click="removeProfile()">Remove</button>
-					<button type="button" class="btn btn-warning" ng-click="saveProfile()">Save</button>
+					<button type="button" title="Simpan Profile" class="btn btn-warning" ng-click="saveProfile()"><i class="fa fa-save"></i></button>
+					<button type="button" title="Hapus Profile" class="btn btn-danger" ng-click="removeProfile()"><i class="fa fa-trash-o"></i></button>
 				</div>
 				<div class="col-xs-2"></div>
-				<div class="col">
-					<button type="button" ng-click="findMatch()" class="btn btn-info">Find Match</button>
-					<button type="button" ng-click="resetResult()" class="btn btn-danger">Reset</button>
-					<button type="button" ng-click="clearAllParams()" class="btn btn-danger">Clear Param</button>
-					<button type="button" ng-click="removeAllCache()" class="btn btn-danger">Clear Cache</button>
+				<div class="col" align="right">
+					<button type="button" title="Find Match" ng-click="findMatch()" class="btn btn-info"><i class="fa fa-search"></i></button>
+					<button type="button" title="Clear semua Parameter" ng-click="clearAllParams()" class="btn btn-danger"><i class="fa fa-eraser"></i></button>
+					<button type="button" title="Hapus Cache" ng-click="removeAllCache()" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+					<button type="button" title="Daftar Hidden Coin" ng-click="showHiddenCoinDialog()" class="btn btn-success"><i class="fa fa-list"></i></button>
 				</div>
 			</div>
+			
 			<form class="row">
 				<div class="col">
 					<div class="form-group row">
@@ -213,6 +215,7 @@
 		</div>
 	</div>
 	<div id="data" class="container custom-container" style="padding: 16px 0;">
+
 		<table id="dataTable" class="table table-bordered" cellspacing="0" width="100%">
 			<thead>
 				<th>#</th>
@@ -256,6 +259,107 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="hiddenCoinList" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Hidden Coin List</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<table id="dataTable" class="table table-bordered" cellspacing="0" width="100%">
+							<thead>
+								<th>#</th>
+								<th>Symbol</th>
+								<th>Rating</th>
+								<th>Note</th>
+							</thead>
+							<tbody>
+								<tr ng-repeat="coin in hiddenCoinList" ng-if="coin.rating <= 2">
+									<td>{{ $index + 1 }}</td>
+									<td>{{ coin.symbol }}</td>
+									<td>
+										<div class="rating-stars text-center">
+											<ul class="stars" style="width: 100%" data-symbol="{{ coin.symbol }}">
+												<li class="star" ng-class="{selected: (coin.rating >= 1) ? true : false}" title="Kurang" data-value="1">
+													<i class="fa fa-star fa-fw"></i>
+												</li>
+												<li class="star" ng-class="{selected: (coin.rating >= 2) ? true : false}" title="Kurang" data-value="2">
+													<i class="fa fa-star fa-fw"></i>
+												</li>
+												<li class="star" ng-class="{selected: (coin.rating >= 3) ? true : false}" title="Sedang" data-value="3">
+													<i class="fa fa-star fa-fw"></i>
+												</li>
+												<li class="star" ng-class="{selected: (coin.rating >= 4) ? true : false}" title="Bagus" data-value="4">
+													<i class="fa fa-star fa-fw"></i>
+												</li>
+												<li class="star" ng-class="{selected: (coin.rating == 5) ? true : false}" title="Exelent" data-value="5">
+													<i class="fa fa-star fa-fw"></i>
+												</li>
+											</ul>
+										</div>
+									</td>
+									<td>{{ coin.note }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="button" ng-click="saveProfileAction()" class="btn btn-primary">Save</button>
+					</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="viewNoteModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Rating Note</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form>
+							<div class="form-group">
+								<label for="profile-name" class="form-control-label">Ulasan Anda</label>
+								<textarea ng-model="noteContentSaved" class="form-control"></textarea>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Rating Note</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form>
+							<div class="form-group">
+								<label for="profile-name" class="form-control-label">Tulis Ulasan</label>
+								<textarea ng-model="noteContent" class="form-control"></textarea>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="button" ng-click="saveNote()" class="btn btn-primary">Save</button>
+					</div>
+			</div>
+		</div>
+	</div>
 
 	<script src="vendors/jquery/dist/jquery.min.js" ></script>
 	<script src="vendors/jquery/dist/jquery.ajax-cross-origin.min.js"></script>
@@ -271,6 +375,7 @@
 	<script src="vendors/datatables/buttons.print.min.js"></script>
 	<script src="vendors/accounting/accounting.js"></script>
 	<script src="vendors/underscore/underscore-min.js"></script>
+	<script src="vendors/nyanStorage/nyanStorage.js"></script>
 
 	<script src="app.js"></script>
 </body>

@@ -4,6 +4,8 @@ angular.module('app', [])
 		$scope.profiles = [];
 		window.coinFiltered = [];
 		$scope.selectedProfile = "default";
+		$scope.displayCoin = 100;
+
 		if (localStorage.getItem('profiles') === null) {
 			localStorage.setItem('profiles', JSON.stringify([]));
 		} else {
@@ -328,12 +330,14 @@ angular.module('app', [])
 		}
 		function startService() {
 			$.ajax({
-				url: "https://api.coinmarketcap.com/v1/ticker/",
+				url: "https://api.coinmarketcap.com/v1/ticker/?limit=10",
 				method: "GET",
 				crossdomain: true
 			}).then(function(dataMarketCap) {
+				var path = document.location.pathname.replace('/index.html', '') + '/proxy.php';
+
 				$.ajax({
-					url: "proxy.php",
+					url: path,
 					method: "GET",
 					crossdomain: true
 				}).then(function(dataStrymex) {
@@ -342,18 +346,15 @@ angular.module('app', [])
 			});
 		}
 		function processingData(dataMarketCap, dataStrymex) {
-			var $counter = 0,
-				$counterDeep = 0;
+			var ratings = nyanStorage.get('ratings');
+
 			dataMarketCap.forEach(function(marketcap, $index) {
-				$counter++;
 				Object.keys(dataStrymex).forEach(function(coinStrymex, $indexStr) {
 					if (marketcap.symbol == dataStrymex[coinStrymex].symbol) {
 						dataMarketCap[$index]["percent_change_30d"] = dataStrymex[coinStrymex].change30days;
 						dataMarketCap[$index]["percent_change_ytd"] = dataStrymex[coinStrymex].changeNewYear;
 					}
-
-
-					$counterDeep++;
+				
 					if ($index == (dataMarketCap.length - 1) && $indexStr == (Object.keys(dataStrymex).length - 1)) {
 						localStorage.setItem("data", JSON.stringify(dataMarketCap));
 						localStorage.setItem("timestamp", Date.now());
@@ -372,159 +373,32 @@ angular.module('app', [])
 			        		+ (month<10 ? '0' : '') + month
 			        		+ d.getFullYear();
 
+			var ratings = nyanStorage.get('ratings') || [];
+			var hideCoin = [];
 
-			if (!reInit) {
-				window.dataTable = $('#dataTable').dataTable({
-					scrollX: true,
-					searchDelay: 500,
-					dom: '<Bl>frtip',
-					buttons: [
-						{
-				            extend: 'excel',
-				            text: 'Export Excel',
-				            filename: fullDate
-				        }, 
-				        'print'
-					],
-					language: [ {
-				        decimal: ".",
-				        thousands: ","
-				    } ],
-				    order: [
-				    	[3, 'asc']
-				    ],
-					lengthMenu: [[-1, 10, 25, 50], ["All", 10, 25, 50]],
-					data: res,
-					columns: [
-						{
-							data: "rank"
-						},
-						{
-							data: "name",
-							render: function(data, type, row) {
-								var isi = data + " (" + row.symbol + ")";
-								var nama = data.replace(/\s+/g, '-').toLowerCase();
-								var queryName = data.replace(/\s+/g, '+').toLowerCase();
-								var link = "https://coinmarketcap.com/currencies/" + nama + "/";
-
-								return "<a target='_blank' href='"+ link +"'>" + isi + "</a><a target='_blank' href='https://www.google.com/search?q=" + queryName + "&source=lnms&tbm=nws' class='google-icon'></a>";
-							}
-						},
-						{
-							data: "market_cap_usd",
-							render: function(data, type, row) {
-								return accounting.formatMoney(data, {
-									precision: 0
-								});
-							}
-						},
-						{
-							data: "price_usd",
-							render: function(data, type, row) {
-								return accounting.formatMoney(data, {
-									precision: 8
-								});
-							}
-						},
-						{
-							data: "total_supply",
-							render: function(data, type, row) {
-								return accounting.formatNumber(data);
-							}
-						},
-						{
-							data: "24h_volume_usd",
-							render: function(data, type, row) {
-								return accounting.formatMoney(data);
-							}
-						},
-						{
-							data: "percent_change_1h",
-							render: function(data, type, row) {
-								if (Number(data) < 0) {
-									return "<span class='negative_change'>" + data + "</span>";
-								} else if (Number(data) > 0) {
-									return "<span class='positive_change'>" + data + "</span>";
-								} else {
-									return "0";
-								}
-							}
-						},
-						{
-							data: "percent_change_24h",
-							render: function(data, type, row) {
-								if (Number(data) < 0) {
-									return "<span class='negative_change'>" + data + "</span>";
-								} else if (Number(data) > 0) {
-									return "<span class='positive_change'>" + data + "</span>";
-								} else {
-									return "0";
-								}
-							}
-						},
-						{
-							data: "percent_change_7d",
-							render: function(data, type, row) {
-								if (Number(data) < 0) {
-									return "<span class='negative_change'>" + data + "</span>";
-								} else if (Number(data) > 0) {
-									return "<span class='positive_change'>" + data + "</span>";
-								} else {
-									return "0";
-								}
-							}
-						},
-						{
-							data: "percent_change_30d",
-							render: function(data, type, row) {
-								data = (data * 100);
-
-								if (Number(data) < 0) {
-									return "<span class='negative_change'>" + data.toFixed(2) + "</span>";
-								} else if (Number(data) > 0) {
-									return "<span class='positive_change'>" + data.toFixed(2) + "</span>";
-								} else {
-									return "0";
-								}
-							}
-						},
-						{
-							data: "percent_change_ytd",
-							render: function(data, type, row) {
-								data = (data * 100);
-
-								if (Number(data) < 0) {
-									return "<span class='negative_change'>" + data.toFixed(2) + "</span>";
-								} else if (Number(data) > 0) {
-									return "<span class='positive_change'>" + data.toFixed(2) + "</span>";
-								} else {
-									return "0";
-								}
-							}
+			res.forEach(function(coin, $index) {
+				ratings.forEach(function(rating) {
+					if (rating.symbol == coin.symbol) {
+						if (rating.rating <= 2) {
+							hideCoin.push(coin.rank);
 						}
-					]
-				});
-			} else {
-				var coins = [];
-				for (var x in res) {
-					coins.push(res[x].id);
-				}
-
-				getPastPrice(coins, function(results) {
-					for (var i in results) {
-						var result = results[i];
-
-						for (var y in res) {
-							var coinY = res[y];
-
-							if (result.coin == coinY.id) {
-								res[y]["percent_change_30d"] = calcPrice(Number(coinY.price_usd), result.lastPrice);
-							}
-						}
+						res[$index]['rating'] = rating.rating;
 					}
-
+				});
+				
+				if ($index == (res.length - 1)) {
 					window.dataTable = $('#dataTable').dataTable({
 						scrollX: true,
+						searchDelay: 500,
+						dom: '<Bl>frtip',
+						buttons: [
+							{
+					            extend: 'excel',
+					            text: 'Export Excel',
+					            filename: fullDate
+					        }, 
+					        'print'
+						],
 						language: [ {
 					        decimal: ".",
 					        thousands: ","
@@ -546,7 +420,66 @@ angular.module('app', [])
 									var queryName = data.replace(/\s+/g, '+').toLowerCase();
 									var link = "https://coinmarketcap.com/currencies/" + nama + "/";
 
-									return "<a target='_blank' href='"+ link +"'>" + isi + "</a><a target='_blank' href='https://www.google.com/search?q=" + queryName + "&source=lnms&tbm=nws' class='google-icon'></a>";
+									var ratingsDom = "";
+									var ratingsData = nyanStorage.get('ratings');
+									var isDone = false;
+									for (var ratingIndex in ratingsData) {
+										var rating = ratingsData[ratingIndex];
+
+										if (!isDone) {
+											if (row.symbol == rating.symbol) {
+												isDone = true;
+												var ratingValue = rating.rating;
+												for (var i = 1; i < 6; i++) {
+													if (i <= 2) {
+														var title = "Kurang";
+													} else if (i == 3) {
+														var title = "Sedang";
+													} else {
+														var title = "Excellent";
+													}
+													if (i <= ratingValue) {
+														ratingsDom += "<li class='star selected' title='" + title + "' data-value='" + i + "'>\
+										                               <i class='fa fa-star fa-fw'></i>\
+											                       </li>";
+											        } else {
+											        	ratingsDom += "<li class='star' title='" + title + "' data-value='" + i + "'>\
+										                               <i class='fa fa-star fa-fw'></i>\
+											                       </li>";
+											        } 
+												}
+											}
+										}
+									}
+									if (!isDone) {
+										for (var i = 1; i < 6; i++) {
+											if (i <= 2) {
+												var title = "Kurang";
+											} else if (i == 3) {
+												var title = "Sedang";
+											} else {
+												var title = "Excellent";
+											}
+											if (i <= 3) {
+												ratingsDom += "<li class='star selected' title='" + title + "' data-value='" + i + "'>\
+								                               <i class='fa fa-star fa-fw'></i>\
+									                       </li>";
+									        } else {
+									        	ratingsDom += "<li class='star' title='" + title + "' data-value='" + i + "'>\
+								                               <i class='fa fa-star fa-fw'></i>\
+									                       </li>";
+									        } 
+										}
+									}
+									
+									return "<a target='_blank' href='"+ link +"'>" + isi + "</a>\
+											<a target='_blank' href='https://www.google.com/search?q=" + queryName + "&source=lnms&tbm=nws' class='google-icon'></a>\
+											<i title='Note' data-symbol='" + row.symbol + "' style='margin-left:8px;cursor:pointer;' class='noteIcon fa fa-sticky-note-o'></i><br />\
+											<div class='rating-stars text-center'>\
+							                    <ul class='stars' data-symbol='" + row.symbol + "' data-coin='" + row.name + "'>\
+							                    	"+ ratingsDom +"\
+							                    </ul>\
+							                </div>";
 								}
 							},
 							{
@@ -612,14 +545,30 @@ angular.module('app', [])
 										return "0";
 									}
 								}
-							}, 
+							},
 							{
 								data: "percent_change_30d",
 								render: function(data, type, row) {
+									data = (data * 100);
+
 									if (Number(data) < 0) {
-										return "<span class='negative_change'>" + data + "</span>";
+										return "<span class='negative_change'>" + data.toFixed(2) + "</span>";
 									} else if (Number(data) > 0) {
-										return "<span class='positive_change'>" + data + "</span>";
+										return "<span class='positive_change'>" + data.toFixed(2) + "</span>";
+									} else {
+										return "0";
+									}
+								}
+							},
+							{
+								data: "percent_change_ytd",
+								render: function(data, type, row) {
+									data = (data * 100);
+
+									if (Number(data) < 0) {
+										return "<span class='negative_change'>" + data.toFixed(2) + "</span>";
+									} else if (Number(data) > 0) {
+										return "<span class='positive_change'>" + data.toFixed(2) + "</span>";
 									} else {
 										return "0";
 									}
@@ -627,52 +576,123 @@ angular.module('app', [])
 							}
 						]
 					});
-				});
-			}
+					$.fn.dataTable.ext.search.push(
+						function(settings, data, dataIndex) {
+							var isHide = false;
+							for (var i = 0; i < hideCoin.length; i++) {
+								var hide = hideCoin[i];
+
+								if (data[0] == hide) {
+									isHide = true;
+									return false;
+								}
+							}
+
+							if (!isHide) {
+								return true;
+							}
+						}
+					);
+					window.dataTable.api().order([3, 'asc']).draw();
+					setTimeout(function() {
+						$('.noteIcon').on('click', function() {
+							var coin = $(this).data('symbol');
+							var ratings = nyanStorage.get('ratings');
+
+							ratings.forEach(function(rating) {
+								if (rating.symbol == coin) {
+									$scope.$apply(function() {
+										$scope.noteContentSaved = rating.note;
+									});
+									$('#viewNoteModal').modal('show');
+								}
+							});
+						});
+						$('.stars li').on('mouseover', function(){
+							var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
+						 
+							// Now highlight all the stars that's not after the current hovered star
+							$(this).parent().children('li.star').each(function(e){
+								if (e < onStar) {
+									$(this).addClass('hover');
+								}
+								else {
+									$(this).removeClass('hover');
+								}
+							});
+							
+						}).on('mouseout', function(){
+							$(this).parent().children('li.star').each(function(e){
+								$(this).removeClass('hover');
+							});
+						});
+						
+						/* 2. Action to perform on click */
+						$('.stars li').on('click', function(){
+							var onStar = parseInt($(this).data('value'), 10); // The star currently selected
+							var stars = $(this).parent().children('li.star');
+							
+							for (i = 0; i < stars.length; i++) {
+								$(stars[i]).removeClass('selected');
+							}
+							
+							for (i = 0; i < onStar; i++) {
+								$(stars[i]).addClass('selected');
+							}
+							
+							// Response
+							var ratingValue = parseInt($(this).parent().find('li.selected').last().data('value'), 10);
+							var coin = {
+								symbol: $(this).parent().data('symbol'),
+								name: $(this).parent().data('coin')
+							};
+							callbackRatingSetter(ratingValue, coin);
+						});
+					}, 2000);
+
+				}
+			});
 
 		}
-		// Ambil data 30 hari yang lalu
-		function getPastPrice(coins, callback) 
-		{
-			coins = coins.join(',');
-			$.ajax({
-				url: "https://script.google.com/macros/s/AKfycbwO6ggRzOD82KE0xi1e2dCz5xAOap8FC6shKiPWSz6P99vsd9E/exec?coins=" + coins,
-				method: "GET",
-				crossdomain: true,
-				cache: true,
-				dataType: 'jsonp'
-			}).then(function(res) {
-				var result = [];
+		function callbackRatingSetter(rating, coin) {
+			var options = {
+				uniq: 'symbol',
+				update: ['rating', 'note']
+			};
+			// nyanStorage.update('ratings', options, {
+			// 	symbol: coin.symbol,
+			// 	coin: coin.name,
+			// 	rating: rating
+			// });
 
-				for (var i in res) {
-					var coin = res[i];
+			$('#noteModal').data('rating', JSON.stringify({
+				symbol: coin.symbol,
+				coin: coin.name,
+				rating: rating
+			}));
+			$('#noteModal').data('options', JSON.stringify(options));
+			$('#noteModal').modal('show');
+		}
+		$scope.saveNote = function() {
+			if ($scope.noteContent !== "") {
+				var ratings = JSON.parse($('#noteModal').data('rating'));
+				var options = JSON.parse($('#noteModal').data('options'));
 
-					var Source = $(coin.result);
+				ratings.note = $scope.noteContent;
 
-					Source.find('script').remove();
-					Source.find('style').remove();
-					Source.find('img').remove();
-					Source.find('embed').remove();
-					Source.find('iframe').remove();
+				nyanStorage.update('ratings', options, ratings);
+				$('#noteModal').modal('hide');
 
-					var lastPrice = Number(Source.find("table.table tbody tr:last-child td").eq(4).text());
-
-					result.push({
-						coin: coin.coin,
-						lastPrice: lastPrice
-					});
-				}
-
-				callback(result);
-			});
+				$scope.noteContent = "";
+			}
 		}
 
 		if (localStorage.getItem('data') !== null) {
 			if (diffTime() >= cacheTime) {
 				startService();
 			} else {
-				var res = localStorage.getItem("data");
-				callbackX(JSON.parse(res), false);
+				var res = nyanStorage.get('data');
+				callbackX(res, false);
 			}
 		} else {
 			startService();
@@ -719,6 +739,54 @@ angular.module('app', [])
 
 			$scope.search = {};
 		}
+		$scope.showHiddenCoinDialog = function() {
+			$scope.hiddenCoinList = nyanStorage.get('ratings');
+
+			$("#hiddenCoinList").modal("show");
+
+			setTimeout(function() {
+				$('.stars li').on('mouseover', function(){
+					var onStar = parseInt($(this).data('value'), 10); // The star currently mouse on
+				 
+					// Now highlight all the stars that's not after the current hovered star
+					$(this).parent().children('li.star').each(function(e){
+						if (e < onStar) {
+							$(this).addClass('hover');
+						}
+						else {
+							$(this).removeClass('hover');
+						}
+					});
+					
+				}).on('mouseout', function(){
+					$(this).parent().children('li.star').each(function(e){
+						$(this).removeClass('hover');
+					});
+				});
+				
+				/* 2. Action to perform on click */
+				$('.stars li').on('click', function(){
+					var onStar = parseInt($(this).data('value'), 10); // The star currently selected
+					var stars = $(this).parent().children('li.star');
+					
+					for (i = 0; i < stars.length; i++) {
+						$(stars[i]).removeClass('selected');
+					}
+					
+					for (i = 0; i < onStar; i++) {
+						$(stars[i]).addClass('selected');
+					}
+					
+					// Response
+					var ratingValue = parseInt($(this).parent().find('li.selected').last().data('value'), 10);
+					var coin = {
+						symbol: $(this).parent().data('symbol'),
+						name: $(this).parent().data('coin')
+					};
+					callbackRatingSetter(ratingValue, coin);
+				});
+			}, 1000);
+		}
 
 		function calcPrice(priceNow, priceLast) {
 			if (priceNow > priceLast) {
@@ -757,6 +825,4 @@ angular.module('app', [])
                 return ( input === 0 ) ? "" : input.toLocaleString( "en-US" );
             } );
 		});
-
-		
 	});

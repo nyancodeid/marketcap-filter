@@ -1,5 +1,11 @@
+body {
+	zoom: 0.95;
+}
+#searchFilter > .container {
+
+}
 .custom-container {
-	max-width: 1280px;
+	max-width: 90%;
 }
 #hero {
 	padding: 2rem 15px;
@@ -45,4 +51,34 @@
     display: inline-block;
     margin-left: 8px;
     margin-bottom: -3px;
+}
+/* Rating Star Widgets Style */
+.rating-stars ul {
+  list-style-type:none;
+  padding:0;
+  margin-bottom: 0;
+  width: 80px;
+
+  -moz-user-select:none;
+  -webkit-user-select:none;
+}
+.rating-stars ul > li.star {
+  display:inline-block;
+  
+}
+
+/* Idle State of the stars */
+.rating-stars ul > li.star > i.fa {
+  font-size: 0.85em; /* Change the size of the stars */
+  color: #ccc; /* Color on idle state */
+}
+
+/* Hover state of the stars */
+.rating-stars ul > li.star.hover > i.fa {
+  color:#FFCC36;
+}
+
+/* Selected state of the stars */
+.rating-stars ul > li.star.selected > i.fa {
+  color:#FF912C;
 }
