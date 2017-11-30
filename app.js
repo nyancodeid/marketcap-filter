@@ -330,11 +330,12 @@ angular.module('app', [])
 		}
 		function startService() {
 			$.ajax({
-				url: "https://api.coinmarketcap.com/v1/ticker/?limit=10",
+				url: "https://api.coinmarketcap.com/v1/ticker/?limit=0",
 				method: "GET",
 				crossdomain: true
 			}).then(function(dataMarketCap) {
-				var path = document.location.pathname.replace('/index.html', '') + '/proxy.php';
+				var path = document.location.pathname.replace('/index.html', '');
+					path.append((path.endsWith('/') ? 'proxy.php' : '/proxy.php'));
 
 				$.ajax({
 					url: path,
