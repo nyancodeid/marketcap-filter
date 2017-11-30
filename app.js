@@ -335,7 +335,7 @@ angular.module('app', [])
 				crossdomain: true
 			}).then(function(dataMarketCap) {
 				var path = document.location.pathname.replace('/index.html', '');
-					path.append((path.endsWith('/') ? 'proxy.php' : '/proxy.php'));
+					path += (path.endsWith('/') ? 'proxy.php' : '/proxy.php');
 
 				$.ajax({
 					url: path,
